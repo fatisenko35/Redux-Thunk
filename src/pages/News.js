@@ -5,8 +5,36 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { CardMedia } from "@mui/material";
+import axios from "axios"
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { clearLoading, setLoading } from "../redux/actions/appActions";
 
 const News = () => {
+  const dispatch = useDispatch()
+  const url = "https://newsapi.org/v2/everything?"
+    + "q=Apple&"
+    + "from=2022-04-18&"
+    + "sortBy=popularity&"
+    + "apiKey=2100b4fe8b284e35a16bca2c11b861f1";
+
+  const getNews = async () => {
+    try {
+      dispatch(setLoading())
+      const { data } = await axios.get(url);
+      console.log(data.articles);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      dispatch(clearLoading())
+    }
+    
+  };
+
+  useEffect(() => {
+    getNews();
+  }, []);
+
   return (
     <Box
       xs={{ d: "flex" }}
@@ -16,27 +44,30 @@ const News = () => {
       flexWrap="wrap"
     >
       {[1, 2, 3, 4].map((item, index) => (
-        <Card sx={{ maxWidth: 345, m: 5 }} key={index}>
+        <Card sx={{ maxWidth: 345, m: 5, maxHeight: 600 }} key={index}>
           <CardMedia
             component="img"
-            height="140"
+            height="250"
             image={
-              item?.image?.thumbnail?.contentUrl ??
+              item?.urlToImage ??
               "https://ichef.bbci.co.uk/news/976/cpsprodpb/5A8B/production/_122497132_tesla.png"
             }
-            alt="green iguana"
+            alt="img"
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              {item?.name ?? "Tesla disables gaming while driving feature"}
+              {item?.title ?? "Tesla disables gaming while driving feature"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {item?.description ??
+              {item?.content ??
                 "It follows an inquiry into Passenger Play, which allowed games to be played while a car was moving."}
             </Typography>
           </CardContent>
           <CardActions>
             <Button size="small">Share</Button>
+            <Button size="small" href={item?.url} target="_blank">
+              Detail
+            </Button>
           </CardActions>
         </Card>
       ))}
