@@ -10,7 +10,9 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearLoading, setLoading } from "../redux/actions/appActions";
 import { setNewsList } from "../redux/actions/newsActions";
-import loadingGif from "../assets/loading.gif"
+import loadingGif from "../assets/loading.gif";
+import {getNews} from "../thunk/newThunks";
+
 
 const News = () => {
   const dispatch = useDispatch();
@@ -22,21 +24,21 @@ const News = () => {
     + "sortBy=popularity&"
     + "apiKey=2100b4fe8b284e35a16bca2c11b861f1";
 
-  const getNews = async () => {
-    try {
-      dispatch(setLoading())
-      const { data } = await axios.get(url);
-      dispatch(setNewsList(data.articles))
-    } catch (error) {
-      console.log(error);
-    } finally {
-      dispatch(clearLoading())
-    }
+  // const getNews = async () => {
+  //   try {
+  //     dispatch(setLoading())
+  //     const { data } = await axios.get(url);
+  //     dispatch(setNewsList(data.articles))
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     dispatch(clearLoading())
+  //   }
     
-  };
+  // };
 
   useEffect(() => {
-    getNews();
+    dispatch(getNews());
   }, []);
 
 
